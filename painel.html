@@ -199,62 +199,141 @@
     </div>
 
     <script>
-        // Variável global para armazenar qual sticker está selecionado no momento
-        let stickerAtual = 'vazio';
+           <script type="module">
+        // Importando o Firebase da internet
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // Função para selecionar o sticker visualmente no painel
-        function selecionarSticker(nomeSticker, botaoClicado) {
-            stickerAtual = nomeSticker;
-            
-            // Remove a classe 'ativo' de todos os botões de sticker
+        // COLE AQUI AS SUAS CHAVES DO FIREBASE
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            databaseURL: "URL_DO_SEU_BANCO",
+            projectId: "SEU_PROJETO",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "NUMERO",
+            appId: "APP_ID"
+        };
+
+        // Inicializando o Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Variável global para o sticker
+        window.stickerAtual = 'vazio';
+
+        // Função para selecionar o sticker
+        window.selecionarSticker = function(nomeSticker, botaoClicado) {
+            window.stickerAtual = nomeSticker;
             const botoes = document.querySelectorAll('.sticker-btn');
             botoes.forEach(btn => btn.classList.remove('ativo'));
-            
-            // Adiciona a classe 'ativo' apenas no botão clicado
             botaoClicado.classList.add('ativo');
         }
 
-        // Função que coleta todos os dados e "envia" (futuramente para o Firebase)
-        function enviarParaTelao() {
+        // Função que envia os dados para o Firebase
+        window.enviarParaTelao = function() {
             const texto = document.getElementById('texto-mensagem').value;
             const corFundo = document.getElementById('cor-fundo').value;
             const corTexto = document.getElementById('cor-texto').value;
 
-            // Este é o pacote de dados (payload) que enviaremos para o banco de dados depois
-            const dadosParaEnviar = {
+            // Enviando para o banco de dados (nó chamado "telao")
+            set(ref(database, 'telao'), {
                 mensagem: texto,
                 corBackground: corFundo,
                 corFonte: corTexto,
-                sticker: stickerAtual,
+                sticker: window.stickerAtual,
                 mostrar: true
-            };
-
-            // Por enquanto, vamos apenas mostrar no console e dar um alerta visual
-            console.log("Dados prontos para o banco de dados:", dadosParaEnviar);
-            alert("Enviado! (Verifique o console para ver o pacote de dados)");
-            
-            // FUTURO: Aqui entrará o código do Firebase:
-            // database.ref('telao').set(dadosParaEnviar);
+            }).then(() => {
+                // Altera o texto do botão brevemente para dar um feedback visual
+                const btn = document.querySelector('.btn-principal');
+                btn.innerText = "Enviado!";
+                setTimeout(() => btn.innerText = "Enviar para o Telão", 2000);
+            }).catch((error) => {
+                alert("Erro ao enviar: " + error);
+            });
         }
 
-        // Função de emergência para limpar a tela
-        function limparTelao() {
-            // Limpa o campo de texto local
+        // Função de emergência
+        window.limparTelao = function() {
             document.getElementById('texto-mensagem').value = '';
-            selecionarSticker('vazio', document.querySelectorAll('.sticker-btn')[0]);
+            window.selecionarSticker('vazio', document.querySelectorAll('.sticker-btn')[0]);
 
-            const dadosParaLimpar = {
+            set(ref(database, 'telao'), {
                 mensagem: "",
                 corBackground: "#000000",
                 corFonte: "#FFFFFF",
                 sticker: "vazio",
                 mostrar: false
-            };
+            });
+        }
+    </script>
+    <script type="module">
+        // Importando o Firebase da internet
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-            console.log("Comando de limpar acionado:", dadosParaLimpar);
-            
-            // FUTURO: Aqui entrará o código do Firebase:
-            // database.ref('telao').set(dadosParaLimpar);
+        // COLE AQUI AS SUAS CHAVES DO FIREBASE
+        const firebaseConfig = {
+  apiKey: "AIzaSyCs_hPOsGiJafU4cPbnlyHmgaJW6f05hfI",
+  authDomain: "agenda-igreja-bbe84.firebaseapp.com",
+  databaseURL: "https://agenda-igreja-bbe84-default-rtdb.firebaseio.com",
+  projectId: "agenda-igreja-bbe84",
+  storageBucket: "agenda-igreja-bbe84.firebasestorage.app",
+  messagingSenderId: "654024894660",
+  appId: "1:654024894660:web:96e668d92038b8234cc191"
+};
+
+        // Inicializando o Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Variável global para o sticker
+        window.stickerAtual = 'vazio';
+
+        // Função para selecionar o sticker
+        window.selecionarSticker = function(nomeSticker, botaoClicado) {
+            window.stickerAtual = nomeSticker;
+            const botoes = document.querySelectorAll('.sticker-btn');
+            botoes.forEach(btn => btn.classList.remove('ativo'));
+            botaoClicado.classList.add('ativo');
+        }
+
+        // Função que envia os dados para o Firebase
+        window.enviarParaTelao = function() {
+            const texto = document.getElementById('texto-mensagem').value;
+            const corFundo = document.getElementById('cor-fundo').value;
+            const corTexto = document.getElementById('cor-texto').value;
+
+            // Enviando para o banco de dados (nó chamado "telao")
+            set(ref(database, 'telao'), {
+                mensagem: texto,
+                corBackground: corFundo,
+                corFonte: corTexto,
+                sticker: window.stickerAtual,
+                mostrar: true
+            }).then(() => {
+                // Altera o texto do botão brevemente para dar um feedback visual
+                const btn = document.querySelector('.btn-principal');
+                btn.innerText = "Enviado!";
+                setTimeout(() => btn.innerText = "Enviar para o Telão", 2000);
+            }).catch((error) => {
+                alert("Erro ao enviar: " + error);
+            });
+        }
+
+        // Função de emergência
+        window.limparTelao = function() {
+            document.getElementById('texto-mensagem').value = '';
+            window.selecionarSticker('vazio', document.querySelectorAll('.sticker-btn')[0]);
+
+            set(ref(database, 'telao'), {
+                mensagem: "",
+                corBackground: "#000000",
+                corFonte: "#FFFFFF",
+                sticker: "vazio",
+                mostrar: false
+            });
+
         }
     </script>
 </body>
