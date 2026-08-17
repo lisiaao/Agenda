@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle - Igreja</title>
+    <style>
+        /* Estilos Base - Foco em usabilidade móvel/tablet */
+        :root {
+            --primary: #4F46E5;
+            --danger: #EF4444;
+            --bg: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text: #1F2937;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 0;
+        }
+
+        /* Cartões de Seção */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        /* Entradas de Texto e Cor */
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: none;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .color-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        input[type="color"] {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        /* Grade de Stickers */
+        .sticker-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .sticker-btn {
+            background-color: var(--bg);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 15px 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .sticker-btn.ativo {
+            border-color: var(--primary);
+            background-color: #EEF2FF;
+            color: var(--primary);
+        }
+
+        /* Botões Principais */
+        .btn-principal {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-principal:active {
+            background-color: #4338CA;
+            transform: scale(0.98);
+        }
+
+        .btn-limpar {
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-limpar:active {
+            background-color: #DC2626;
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📱 Controle do Telão</h1>
+
+        <!-- Bloco 1: Mensagem -->
+        <div class="card">
+            <h2>Mensagem</h2>
+            <textarea id="texto-mensagem" placeholder="Digite o aviso, versículo ou letra de música aqui..."></textarea>
+            <button class="btn-principal" onclick="enviarParaTelao()">Enviar para o Telão</button>
+        </div>
+
+        <!-- Bloco 2: Aparência -->
+        <div class="card">
+            <h2>Aparência</h2>
+            <div class="color-group">
+                <div class="color-picker">
+                    <label for="cor-fundo">Fundo:</label>
+                    <input type="color" id="cor-fundo" value="#000000">
+                </div>
+                <div class="color-picker">
+                    <label for="cor-texto">Texto:</label>
+                    <input type="color" id="cor-texto" value="#FFFFFF">
+                </div>
+            </div>
+        </div>
+
+        <!-- Bloco 3: Stickers -->
+        <div class="card">
+            <h2>Sticker (Imagem/Ícone)</h2>
+            <div class="sticker-grid">
+                <!-- O valor 'vazio' remove o sticker -->
+                <button class="sticker-btn ativo" onclick="selecionarSticker('vazio', this)">Nenhum</button>
+                <button class="sticker-btn" onclick="selecionarSticker('aviso.png', this)">Aviso</button>
+                <button class="sticker-btn" onclick="selecionarSticker('biblia.png', this)">Versículo</button>
+                <button class="sticker-btn" onclick="selecionarSticker('oracao.png', this)">Oração</button>
+                <button class="sticker-btn" onclick="selecionarSticker('louvor.png', this)">Louvor</button>
+                <button class="sticker-btn" onclick="selecionarSticker('pix.png', this)">Dízimo/PIX</button>
+            </div>
+        </div>
+
+        <!-- Bloco 4: Botão de Emergência -->
+        <div class="card" style="background-color: #FEF2F2;">
+            <button class="btn-limpar" onclick="limparTelao()">Apagar Telão (Limpar Tudo)</button>
+        </div>
+    </div>
+
+    <script>
+        // Variável global para armazenar qual sticker está selecionado no momento
+        let stickerAtual = 'vazio';
+
+        // Função para selecionar o sticker visualmente no painel
+        function selecionarSticker(nomeSticker, botaoClicado) {
+            stickerAtual = nomeSticker;
+            
+            // Remove a classe 'ativo' de todos os botões de sticker
+            const botoes = document.querySelectorAll('.sticker-btn');
+            botoes.forEach(btn => btn.classList.remove('ativo'));
+            
+            // Adiciona a classe 'ativo' apenas no botão clicado
+            botaoClicado.classList.add('ativo');
+        }
+
+        // Função que coleta todos os dados e "envia" (futuramente para o Firebase)
+        function enviarParaTelao() {
+            const texto = document.getElementById('texto-mensagem').value;
+            const corFundo = document.getElementById('cor-fundo').value;
+            const corTexto = document.getElementById('cor-texto').value;
+
+            // Este é o pacote de dados (payload) que enviaremos para o banco de dados depois
+            const dadosParaEnviar = {
+                mensagem: texto,
+                corBackground: corFundo,
+                corFonte: corTexto,
+                sticker: stickerAtual,
+                mostrar: true
+            };
+
+            // Por enquanto, vamos apenas mostrar no console e dar um alerta visual
+            console.log("Dados prontos para o banco de dados:", dadosParaEnviar);
+            alert("Enviado! (Verifique o console para ver o pacote de dados)");
+            
+            // FUTURO: Aqui entrará o código do Firebase:
+            // database.ref('telao').set(dadosParaEnviar);
+        }
+
+        // Função de emergência para limpar a tela
+        function limparTelao() {
+            // Limpa o campo de texto local
+            document.getElementById('texto-mensagem').value = '';
+            selecionarSticker('vazio', document.querySelectorAll('.sticker-btn')[0]);
+
+            const dadosParaLimpar = {
+                mensagem: "",
+                corBackground: "#000000",
+                corFonte: "#FFFFFF",
+                sticker: "vazio",
+                mostrar: false
+            };
+
+            console.log("Comando de limpar acionado:", dadosParaLimpar);
+            
+            // FUTURO: Aqui entrará o código do Firebase:
+            // database.ref('telao').set(dadosParaLimpar);
+        }
+    </script>
+</body>
+</html>
