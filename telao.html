@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telão - Igreja</title>
+    <!-- Importando a fonte Montserrat do Google Fonts para um visual moderno e legível -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Zera as margens para a tela preencher o monitor todo */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Remove barras de rolagem */
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* O fundo que receberá a cor do painel */
+        #tela-fundo {
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative; /* Permite posicionar o sticker livremente */
+            box-sizing: border-box;
+            padding: 5%;
+            /* Transição suave de 0.5 segundos ao mudar de cor */
+            transition: background-color 0.5s ease; 
+        }
+
+        /* O texto central */
+        #texto-principal {
+            color: #FFFFFF;
+            /* O tamanho 'vw' faz a fonte crescer ou diminuir dependendo do tamanho da TV/Projetor */
+            font-size: 6vw; 
+            text-align: center;
+            margin: 0;
+            line-height: 1.2;
+            /* white-space: pre-wrap garante que as quebras de linha (Enter) do painel funcionem aqui */
+            white-space: pre-wrap;
+            transition: color 0.5s ease, opacity 0.5s ease;
+        }
+
+        /* O sticker (ícone) no canto da tela */
+        #sticker-ativo {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            width: 15vw; /* Tamanho proporcional à tela */
+            max-width: 200px;
+            height: auto;
+            display: none; /* Começa escondido */
+            transition: opacity 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="tela-fundo">
+        <!-- A imagem do Sticker -->
+        <img id="sticker-ativo" src="" alt="Sticker da Igreja">
+        
+        <!-- O Texto -->
+        <div id="container-mensagem">
+            <h1 id="texto-principal">Bem-vindos</h1>
+        </div>
+    </div>
+
+    <script>
+        // Esta é a função que receberá os dados do banco de dados (Firebase)
+        // e aplicará instantaneamente na tela.
+        function atualizarTelao(dados) {
+            const telaFundo = document.getElementById('tela-fundo');
+            const textoPrincipal = document.getElementById('texto-principal');
+            const stickerImg = document.getElementById('sticker-ativo');
+
+            // 1. Atualiza as Cores
+            telaFundo.style.backgroundColor = dados.corBackground;
+            textoPrincipal.style.color = dados.corFonte;
+
+            // 2. Atualiza o Texto (Se mostrar = false, esconde o texto)
+            if (dados.mostrar) {
+                textoPrincipal.innerText = dados.mensagem;
+                textoPrincipal.style.opacity = "1";
+            } else {
+                textoPrincipal.style.opacity = "0";
+            }
+
+            // 3. Atualiza o Sticker
+            if (dados.sticker === 'vazio') {
+                stickerImg.style.display = 'none';
+                stickerImg.src = '';
+            } else {
+                // Se houver um sticker selecionado, atualiza o caminho da imagem e mostra
+                stickerImg.src = dados.sticker;
+                stickerImg.style.display = 'block';
+            }
+        }
+
+        // ==========================================
+        // ÁREA DE TESTE (Pode apagar no futuro)
+        // Como ainda não ligamos o banco de dados,
+        // você pode abrir o Console (F12) nesta tela e colar este comando para testar:
+        // 
+        // atualizarTelao({ mensagem: "Deus é bom o tempo todo!", corBackground: "#1e3a8a", corFonte: "#facc15", sticker: "vazio", mostrar: true })
+        // ==========================================
+    </script>
+</body>
+</html>
