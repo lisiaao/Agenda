@@ -72,43 +72,60 @@
     </div>
 
     <script>
-        // Esta é a função que receberá os dados do banco de dados (Firebase)
-        // e aplicará instantaneamente na tela.
-        function atualizarTelao(dados) {
-            const telaFundo = document.getElementById('tela-fundo');
-            const textoPrincipal = document.getElementById('texto-principal');
-            const stickerImg = document.getElementById('sticker-ativo');
+         <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        // Importando a função onValue, que fica "escutando" as mudanças em tempo real
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-            // 1. Atualiza as Cores
-            telaFundo.style.backgroundColor = dados.corBackground;
-            textoPrincipal.style.color = dados.corFonte;
+        // COLE AQUI AS MESMAS CHAVES DO FIREBASE
+      const firebaseConfig = {
+  apiKey: "AIzaSyCs_hPOsGiJafU4cPbnlyHmgaJW6f05hfI",
+  authDomain: "agenda-igreja-bbe84.firebaseapp.com",
+  databaseURL: "https://agenda-igreja-bbe84-default-rtdb.firebaseio.com",
+  projectId: "agenda-igreja-bbe84",
+  storageBucket: "agenda-igreja-bbe84.firebasestorage.app",
+  messagingSenderId: "654024894660",
+  appId: "1:654024894660:web:96e668d92038b8234cc191"
+};
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
 
-            // 2. Atualiza o Texto (Se mostrar = false, esconde o texto)
-            if (dados.mostrar) {
-                textoPrincipal.innerText = dados.mensagem;
-                textoPrincipal.style.opacity = "1";
-            } else {
-                textoPrincipal.style.opacity = "0";
+        // A mágica acontece aqui: conectamos no nó 'telao'
+        const telaoRef = ref(database, 'telao');
+
+        // Sempre que houver qualquer alteração no painel, esta função roda automaticamente
+        onValue(telaoRef, (snapshot) => {
+            const dados = snapshot.val();
+            
+            if (dados) {
+                const telaFundo = document.getElementById('tela-fundo');
+                const textoPrincipal = document.getElementById('texto-principal');
+                const stickerImg = document.getElementById('sticker-ativo');
+
+                // Atualiza Cores
+                telaFundo.style.backgroundColor = dados.corBackground;
+                textoPrincipal.style.color = dados.corFonte;
+
+                // Atualiza Texto
+                if (dados.mostrar) {
+                    textoPrincipal.innerText = dados.mensagem;
+                    textoPrincipal.style.opacity = "1";
+                } else {
+                    textoPrincipal.style.opacity = "0";
+                }
+
+                // Atualiza Sticker
+                if (dados.sticker === 'vazio') {
+                    stickerImg.style.display = 'none';
+                    stickerImg.src = '';
+                } else {
+                    stickerImg.src = dados.sticker;
+                    stickerImg.style.display = 'block';
+                }
             }
+        });
+    </script>
 
-            // 3. Atualiza o Sticker
-            if (dados.sticker === 'vazio') {
-                stickerImg.style.display = 'none';
-                stickerImg.src = '';
-            } else {
-                // Se houver um sticker selecionado, atualiza o caminho da imagem e mostra
-                stickerImg.src = dados.sticker;
-                stickerImg.style.display = 'block';
-            }
-        }
-
-        // ==========================================
-        // ÁREA DE TESTE (Pode apagar no futuro)
-        // Como ainda não ligamos o banco de dados,
-        // você pode abrir o Console (F12) nesta tela e colar este comando para testar:
-        // 
-        // atualizarTelao({ mensagem: "Deus é bom o tempo todo!", corBackground: "#1e3a8a", corFonte: "#facc15", sticker: "vazio", mostrar: true })
-        // ==========================================
     </script>
 </body>
 </html>
